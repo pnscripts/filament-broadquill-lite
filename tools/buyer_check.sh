@@ -7,11 +7,12 @@ PHP_BIN=$1; FILAMENT=$2; WORK=$3; PORT=${4:-8766}
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 COMPOSER="$(command -v composer)"
 step() { echo "STEP $1: $2"; }
+fail() { echo "  FAIL: $1"; exit 1; }
 rm -rf "$WORK" && mkdir -p "$WORK"
 step 1 "release archive"
 git -C "$ROOT" archive --format=zip --prefix=filament-broadquill-lite/ -o "$WORK/filament-broadquill-lite.zip" HEAD
 (cd "$WORK" && unzip -q filament-broadquill-lite.zip)
-test ! -d "$WORK/filament-broadquill-lite/tests" && test ! -d "$WORK/filament-broadquill-lite/docs" && echo "  archive has no tests/docs: ok"
+test ! -d "$WORK/filament-broadquill-lite/tests" && test ! -d "$WORK/filament-broadquill-lite/docs" && echo "  archive has no tests/docs: ok" || fail "archive content"
 step 2 "fresh Laravel app"
 "$PHP_BIN" "$COMPOSER" create-project -q --no-interaction laravel/laravel "$WORK/app" "^13.0"
 cd "$WORK/app"
@@ -20,8 +21,8 @@ cd "$WORK/app"
 step 3 "composer require from the archive"
 "$PHP_BIN" "$COMPOSER" config repositories.broadquill "{\"type\":\"path\",\"url\":\"$WORK/filament-broadquill-lite\",\"options\":{\"symlink\":false,\"versions\":{\"pnscripts/filament-broadquill-lite\":\"1.0.0\"}}}"
 "$PHP_BIN" "$COMPOSER" require -q --no-interaction "pnscripts/filament-broadquill-lite:^1.0"
-"$PHP_BIN" artisan package:discover | grep -q "pnscripts/filament-broadquill-lite" && echo "  provider discovered: ok"
-"$PHP_BIN" artisan tinker --execute="echo __('broadquill-lite::bulk-edit.label');" | grep -q "Edit selected" && echo "  translations: ok"
+"$PHP_BIN" artisan package:discover | grep -q "pnscripts/filament-broadquill-lite" && echo "  provider discovered: ok" || fail "provider discovered: ok"
+"$PHP_BIN" artisan tinker --execute="echo __('broadquill-lite::bulk-edit.label');" | grep -q "Edit selected" && echo "  translations: ok" || fail "translations: ok"
 step 4 "demo resource from the Quick start"
 cp -r "$ROOT/tools/buyer-app/." "$WORK/app/"
 sed -i "s#->path('admin')#->path('admin')->brandName('Demo Shop')#" app/Providers/Filament/AdminPanelProvider.php
@@ -35,5 +36,5 @@ cd ..
 echo "$SERVER_PID" > "$WORK/serve.pid"
 trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
 sleep 3
-BASE="http://127.0.0.1:$PORT" node "$ROOT/tools/buyer-ui.mjs"
+BASE="http://127.0.0.1:$PORT" node "$ROOT/tools/buyer-ui.mjs" || fail "browser flow"
 echo "BUYER CHECK PASSED"
