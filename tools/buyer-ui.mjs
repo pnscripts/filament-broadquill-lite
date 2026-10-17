@@ -1,0 +1,31 @@
+// Drives the Quick start resource in headless Chrome and checks the result in the page.
+// Needs Playwright (resolved from PLAYWRIGHT_DIR, default ~/.cache/pn-mobile-qa).
+import { createRequire } from 'module';
+import os from 'os';
+const require = createRequire((process.env.PLAYWRIGHT_DIR || `${os.homedir()}/.cache/pn-mobile-qa`) + '/');
+const { chromium } = require('playwright');
+const base = process.env.BASE;
+const b = await chromium.launch({ channel: 'chrome', headless: true });
+const p = await (await b.newContext({ viewport: { width: 1600, height: 900 } })).newPage();
+const problems = [];
+p.on('console', m => { if (['error', 'warning'].includes(m.type())) problems.push(m.text()); });
+const check = (ok, what) => { console.log(`  ${ok ? 'ok' : 'FAIL'}: ${what}`); if (!ok) process.exitCode = 1; };
+await p.goto(`${base}/demo-login`, { waitUntil: 'networkidle' });
+const rows = p.locator('tbody tr');
+for (const i of [2, 4, 8]) await rows.nth(i).locator('input[type=checkbox]').check();
+await p.getByRole('button', { name: 'Bulk actions' }).click();
+await p.locator('.fi-dropdown-panel').getByText(/Edit selected/).first().click();
+await p.waitForTimeout(1000);
+const m = p.locator('.fi-modal-window').filter({ hasText: 'Edit selected' });
+check(await m.isVisible(), 'modal opens from Bulk actions');
+await m.locator('[id="mountedActionSchema0.broadquill.apply.f0"]').check();
+await p.waitForTimeout(700);
+await m.locator('[id="mountedActionSchema0.status"]').selectOption('active');
+await m.getByRole('button', { name: 'Apply changes' }).click();
+await p.waitForTimeout(1500);
+const toast = await p.locator('.fi-no-notification').first().innerText().catch(() => '');
+check(/Applied to 2 of 3/.test(toast) && /not allowed to edit 1 record/.test(toast), `notification: ${toast.replace(/\s+/g, ' ')}`);
+const statuses = await rows.evaluateAll(rs => rs.map(r => r.innerText.includes('Active') ? 'Active' : (r.innerText.includes('Archived') ? 'Archived' : 'Draft')));
+check(statuses[2] === 'Active' && statuses[4] === 'Active' && statuses[8] === 'Archived', `table after apply: ${statuses.join(',')}`);
+check(problems.length === 0, `console errors/warnings: ${problems.length}`);
+await b.close();
