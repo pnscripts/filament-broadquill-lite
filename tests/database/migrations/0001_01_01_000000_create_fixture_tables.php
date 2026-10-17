@@ -37,6 +37,10 @@ return new class extends Migration
             $table->json('settings')->nullable();
             $table->string('secret')->nullable();
             $table->string('updated_by')->nullable();
+            $table->json('labels')->nullable();
+            $table->dateTime('remind_at')->nullable();
+            $table->time('opens_at')->nullable();
+            $table->string('color')->nullable();
             $table->timestamps();
         });
     }

@@ -43,7 +43,11 @@ function bulkEditData(array $ticks): array
  */
 function sentNotifications(): array
 {
-    app(\Filament\Notifications\NotificationMailbox::class)->flush();
+    if (class_exists(\Filament\Notifications\NotificationMailbox::class)) {
+        // Filament 4.14+ queues notifications in a mailbox until the request ends.
+        app(\Filament\Notifications\NotificationMailbox::class)->flush();
+    }
+
     $component = new \Filament\Notifications\Livewire\Notifications;
     $component->mount();
     $component->pullNotificationsFromSession();

@@ -18,7 +18,7 @@ class Post extends Model
 
     protected $fillable = [
         'title', 'slug', 'status', 'category_id', 'is_featured', 'is_locked', 'published_on',
-        'price', 'notes', 'settings', 'settings->color', 'updated_by',
+        'price', 'notes', 'settings', 'settings->color', 'updated_by', 'labels', 'remind_at', 'opens_at', 'color',
     ];
 
     protected $casts = [
@@ -27,6 +27,8 @@ class Post extends Model
         'published_on' => 'date',
         'price' => 'decimal:2',
         'settings' => 'array',
+        'labels' => 'array',
+        'remind_at' => 'datetime',
     ];
 
     protected static function booted(): void
