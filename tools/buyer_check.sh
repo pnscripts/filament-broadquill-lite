@@ -28,8 +28,12 @@ sed -i "s#->path('admin')#->path('admin')->brandName('Demo Shop')#" app/Provider
 "$PHP_BIN" artisan migrate:fresh --seed --force -q
 step 5 "real UI in Chrome"
 # PHP's built-in server directly (artisan serve drops most environment variables).
-(cd public && setsid "$PHP_BIN" -S "127.0.0.1:$PORT" ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php > "$WORK/serve.log" 2>&1 & echo $! > "$WORK/serve.pid")
+cd public
+"$PHP_BIN" -S "127.0.0.1:$PORT" ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php > "$WORK/serve.log" 2>&1 &
+SERVER_PID=$!
+cd ..
+echo "$SERVER_PID" > "$WORK/serve.pid"
+trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
 sleep 3
-trap 'kill -- -"$(ps -o pgid= -p "$(cat "$WORK/serve.pid")" | tr -d " ")" 2>/dev/null || true' EXIT
 BASE="http://127.0.0.1:$PORT" node "$ROOT/tools/buyer-ui.mjs"
 echo "BUYER CHECK PASSED"
