@@ -179,7 +179,7 @@ php artisan vendor:publish --tag=broadquill-lite-translations
 
 ## Not included
 
-Lite sets and clears values. It does not do arithmetic or text operations, preview changes, keep a history or undo, edit many-to-many relationships or run large edits on the queue. Those are the parts of **Broadquill Pro** (coming soon at [pnscripts.com](https://pnscripts.com/marketplace/filament-broadquill)).
+Lite sets and clears values. It does not do arithmetic or text operations, preview changes, keep a history or undo, edit many-to-many relationships or run large edits on the queue. Those are the parts of **Broadquill Pro** (coming soon in the [PN Scripts marketplace](https://pnscripts.com/marketplace)).
 
 ## FAQ
 
