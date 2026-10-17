@@ -7,7 +7,8 @@ PHP_BIN=$1; FILAMENT=$2; LARAVEL=$3; LABEL=${4:-$(echo "$FILAMENT-$LARAVEL" | tr
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 DIR="$ROOT/build/matrix/$LABEL"
 rm -rf "$DIR" && mkdir -p "$DIR"
-git -C "$ROOT" archive --format=tar HEAD | tar -x -C "$DIR"
+# all tracked files (git archive would drop the export-ignored tests)
+(cd "$ROOT" && git ls-files -z | xargs -0 tar -c) | tar -x -C "$DIR"
 # include uncommitted working-tree changes of tracked files and new test files
 (cd "$ROOT" && git ls-files -m -o --exclude-standard src tests resources composer.json | while read -r f; do mkdir -p "$DIR/$(dirname "$f")"; cp "$f" "$DIR/$f"; done)
 cd "$DIR"

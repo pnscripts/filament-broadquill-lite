@@ -71,14 +71,13 @@ There is nothing to publish, migrate or register in the panel.
 - Laravel 12 or 13
 - Filament 4.13+ or 5.8+
 
-Tested with the full test suite on:
+Tested with the full test suite (48 tests) on:
 
 | PHP | Laravel | Filament | Livewire |
 |---|---|---|---|
 | 8.3.35 | 13.37.0 | 4.15.2 | 3.8.10 |
-| 8.3.35 | 12.70.0 | 4.15.2 | 3.8.10 |
 | 8.3.35 | 12.70.0 | 4.13.4 | 3.8.10 |
-| 8.4.26 | 13.37.0 | 5.10.2, 5.9.0, 5.8.4 | 4.4.7 |
+| 8.4.26 | 13.37.0 | 5.10.2, 5.8.4 | 4.4.7 |
 | 8.4.26 | 12.70.0 | 5.10.2 | 4.4.7 |
 
 Databases: the suite runs on SQLite and on MySQL 8.0.46. Older Filament 4 and 5 releases (before 4.13 and 5.8) failed in our test harness together with the current Livewire, so the package requires the tested releases. The screenshots come from a Laravel 13.37 app with Filament 5.10 in Chrome; the same flow also passed in a fresh Laravel 13 app with Filament 4.15 on PHP 8.3.
