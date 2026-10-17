@@ -27,8 +27,9 @@ cp -r "$ROOT/tools/buyer-app/." "$WORK/app/"
 sed -i "s#->path('admin')#->path('admin')->brandName('Demo Shop')#" app/Providers/Filament/AdminPanelProvider.php
 "$PHP_BIN" artisan migrate:fresh --seed --force -q
 step 5 "real UI in Chrome"
-(setsid "$PHP_BIN" artisan serve --host=127.0.0.1 --port="$PORT" > "$WORK/serve.log" 2>&1 & echo $! > "$WORK/serve.pid")
-sleep 4
+# PHP's built-in server directly (artisan serve drops most environment variables).
+(cd public && setsid "$PHP_BIN" -S "127.0.0.1:$PORT" ../vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php > "$WORK/serve.log" 2>&1 & echo $! > "$WORK/serve.pid")
+sleep 3
+trap 'kill -- -"$(ps -o pgid= -p "$(cat "$WORK/serve.pid")" | tr -d " ")" 2>/dev/null || true' EXIT
 BASE="http://127.0.0.1:$PORT" node "$ROOT/tools/buyer-ui.mjs"
-kill "$(cat "$WORK/serve.pid")" 2>/dev/null || true
 echo "BUYER CHECK PASSED"
