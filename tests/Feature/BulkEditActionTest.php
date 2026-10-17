@@ -372,7 +372,7 @@ it('writes one key inside a JSON column and keeps the other keys', function () {
         ->callTableBulkAction('bulkEdit', [$post], data: bulkEditData([0 => ['settings.color', 'teal']]))
         ->assertHasNoTableBulkActionErrors();
 
-    expect($post->fresh()->settings)->toBe(['color' => 'teal', 'size' => 'large']);
+    expect($post->fresh()->settings)->toEqual(['color' => 'teal', 'size' => 'large']);
 });
 
 it('explains which attribute is missing from $fillable', function () {

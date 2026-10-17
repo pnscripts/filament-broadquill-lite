@@ -73,6 +73,23 @@ abstract class TestCase extends Orchestra
     protected function defineEnvironment($app): void
     {
         $app['config']->set('database.default', 'testing');
+
+        if (getenv('BQ_DB') === 'mysql') {
+            // Run the suite on MySQL: BQ_DB=mysql BQ_DB_PORT=3408 vendor/bin/pest
+            $app['config']->set('database.connections.mysql', [
+                'driver' => 'mysql',
+                'host' => getenv('BQ_DB_HOST') ?: '127.0.0.1',
+                'port' => getenv('BQ_DB_PORT') ?: '3306',
+                'database' => getenv('BQ_DB_DATABASE') ?: 'broadquill_test',
+                'username' => getenv('BQ_DB_USERNAME') ?: 'root',
+                'password' => getenv('BQ_DB_PASSWORD') ?: '',
+                'charset' => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+                'prefix' => '',
+                'strict' => true,
+            ]);
+            $app['config']->set('database.default', 'mysql');
+        }
         $app['config']->set('app.key', 'base64:' . base64_encode(str_repeat('b', 32)));
         $app['config']->set('auth.providers.users.model', User::class);
     }

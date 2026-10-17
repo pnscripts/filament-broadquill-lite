@@ -81,7 +81,7 @@ Tested with the full test suite on:
 | 8.4.26 | 13.37.0 | 5.10.2, 5.9.0, 5.8.4 | 4.4.7 |
 | 8.4.26 | 12.70.0 | 5.10.2 | 4.4.7 |
 
-Older Filament 4 and 5 releases (before 4.13 and 5.8) failed in our test harness together with the current Livewire, so the package requires the tested releases. The screenshots come from a Laravel 13.37 app with Filament 5.10 in Chrome.
+Databases: the suite runs on SQLite and on MySQL 8.0.46. Older Filament 4 and 5 releases (before 4.13 and 5.8) failed in our test harness together with the current Livewire, so the package requires the tested releases. The screenshots come from a Laravel 13.37 app with Filament 5.10 in Chrome; the same flow also passed in a fresh Laravel 13 app with Filament 4.15 on PHP 8.3.
 
 ## Usage
 
@@ -212,4 +212,4 @@ MIT. See [LICENSE](LICENSE).
 
 Made by PN Scripts (https://pnscripts.com, office@pnscripts.com). Questions and bug reports: [GitHub issues](https://github.com/pnscripts/filament-broadquill-lite/issues) or office@pnscripts.com.
 
-Created with AI assistance; the code, tests and texts were checked by PN Scripts with the Pest suite on the PHP, Laravel and Filament versions listed above, PHPStan at the max level, and a buyer-style install in a fresh Laravel 13 app used in Chrome.
+Created with AI assistance; the code, tests and texts were checked by PN Scripts with the Pest suite on the PHP, Laravel, Filament and database versions listed above, PHPStan at the max level, and a buyer-style install from the release archive in fresh Laravel 13 apps (Filament 4.15 and 5.10) used in Chrome.

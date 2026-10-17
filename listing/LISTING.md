@@ -36,4 +36,4 @@ Checkbox notes (each one is a public claim): dark mode and translations are both
 ## Not verified
 
 - Filament releases before 4.13 and 5.8 (they failed in the test harness with the current Livewire, so composer excludes them).
-- MySQL and PostgreSQL: the suite and the buyer checks run on SQLite. The action uses only Eloquent and the schema builder's `getColumns()`, which Laravel supports on all of them.
+- PostgreSQL and SQL Server: the suite runs on SQLite and MySQL 8.0.46 only. The action uses only Eloquent and the schema builder's `getColumns()`, which Laravel supports on all of them.
